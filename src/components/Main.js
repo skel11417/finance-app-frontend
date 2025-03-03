@@ -128,6 +128,19 @@ class Main extends Component {
       /* paymentDayOfMonth:*/
       DEBTS[0].paymentDayOfMonth
       )
+    // const loanPayments = DEBTS.forEach((debt) => {
+    //   this.computeRemainingLoanPayments(
+    //     /* currentBalance:*/
+    //     debt.currentBalance,
+    //     /*interestRate:*/
+    //     debt.interestRate,
+    //     /*monthlyPayment:*/
+    //     debt.monthlyPayment,
+    //     /* paymentDayOfMonth:*/
+    //     debt.paymentDayOfMonth
+    //     )
+    // });
+
     return loanPayments.map(loanPayment =>
       <tr>
         <td>{moment(loanPayment.paymentDate).format('M/D/Y')}</td>
@@ -144,6 +157,23 @@ class Main extends Component {
     )
   }
 
+  // sumAllDebts = () => {
+  //   const reducer = (accumulator, curr) => accumulator + curr;
+  //   return DEBTS.map(debt => debt.currentBalance).reduce(reducer)
+  // }
+
+  calculateNetWorth = () => {
+    const reducer = (accumulator, curr) => accumulator + curr;
+    const assetsArray = [
+      ASSETS.bankBalance,
+      ASSETS.tsp,
+      ASSETS.fourOhOneK,
+      ASSETS.ayeAreEh
+    ];
+    const debtsArray = DEBTS.map(debt => debt.currentBalance);
+    return assetsArray.reduce(reducer) - debtsArray.reduce(reducer);
+  }
+
   render(){
     return(
       <div>
@@ -152,12 +182,24 @@ class Main extends Component {
         <p>Monthly Loan Payments: {this.formatter.format(this.computeMonthlyLoanPayments())}
         </p>
         <p>Current Bank Balance:
-        {this.formatter.format(ASSETS.bankBalance)}
+         {this.formatter.format(ASSETS.bankBalance)}
         </p>
-        <p>Expected EOY Balance: {this.formatter.format(this.projectEOYAssetsByBudget())}
+        <p>Current Net Worth:
+         {this.formatter.format(this.calculateNetWorth())}
         </p>
-        <p> Expected Balance at end of next year:  {this.formatter.format(
+        <p>Expected EOY Balance (2023): {this.formatter.format(this.projectEOYAssetsByBudget())}
+        </p>
+        <p> Expected Balance at end of next year (2024):  {this.formatter.format(
           this.projectEOYAssets(this.projectEOYAssetsByBudget())
+        )}
+        </p>
+        <p> Expected Balance at end of the year after next (2025):  {this.formatter.format(
+          this.projectEOYAssets(
+            this.projectEOYAssets(
+              this.projectEOYAssetsByBudget()
+              )
+            )
+
         )}
         </p>
         <p> Budget Items </p>
@@ -174,7 +216,8 @@ class Main extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.renderLoanPayments()
+            {
+              this.renderLoanPayments()
             }
           </tbody>
         </table>
